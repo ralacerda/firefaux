@@ -13,4 +13,5 @@ export type HasUid<T> = {
 export type UserAuth = {
   email: string;
   password: string;
+  displayName?: string;
 };

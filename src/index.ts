@@ -13,21 +13,20 @@ export function extendDocument<T>(
   return [doc, fn] as const;
 }
 
-export function createUser(user: UserAuth | (() => UserAuth)) {
+export function defineUser(fn: () => UserAuth) {
+  return fn;
+}
+
+export function createUser(fn: () => UserAuth) {
   const uid = Math.random().toString(36).slice(7);
-  if (typeof user === "function") {
-    user = user();
-  }
+  const user = fn();
   return {
     uid,
     ...user,
   };
 }
 
-export function createMultipleUsers(
-  user: UserAuth | (() => UserAuth),
-  count: number,
-) {
+export function createMultipleUsers(user: () => UserAuth, count: number) {
   const users: HasUid<UserAuth>[] = [];
   for (let i = 0; i < count; i++) {
     const newUser = createUser(user);
