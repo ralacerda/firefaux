@@ -1,4 +1,4 @@
-# packageName
+# Fire Faux
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
@@ -6,7 +6,7 @@
 <!-- [![bundle][bundle-src]][bundle-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
 
-This is my package description.
+A simple and fast way to populate your Firebase Emulator with fake data.
 
 ## Usage
 
@@ -14,26 +14,23 @@ Install package:
 
 ```sh
 # npm
-npm install packageName
+npm install firefaux
 
 # yarn
-yarn add packageName
+yarn add firefaux
 
 # pnpm
-pnpm install packageName
-
-# bun
-bun install packageName
+pnpm install firefaux
 ```
 
 Import:
 
 ```js
 // ESM
-import {} from "packageName";
+import {} from "firefaux";
 
 // CommonJS
-const {} = require("packageName");
+const {} = require("firefaux");
 ```
 
 ## Development
@@ -45,8 +42,6 @@ const {} = require("packageName");
 - Run interactive tests using `pnpm dev`
 
 ## License
-
-Made with 💛
 
 Published under [MIT License](./LICENSE).
 
