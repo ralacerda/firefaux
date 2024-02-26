@@ -1,4 +1,4 @@
-# Fire Faux
+# Fire Faux (WIP)
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
@@ -7,6 +7,7 @@
 <!-- [![Codecov][codecov-src]][codecov-href] -->
 
 A simple and fast way to populate your Firebase Emulator with fake data.
+Useful for developing and testing.
 
 ## Usage
 
@@ -23,14 +24,11 @@ yarn add firefaux
 pnpm install firefaux
 ```
 
-Import:
+If you want to create random date, another package is required.
+I recommend [fakerjs](https://fakerjs.dev/)
 
 ```js
-// ESM
-import {} from "firefaux";
-
-// CommonJS
-const {} = require("firefaux");
+import * as ff from "firefaux";
 ```
 
 ## Development
@@ -39,7 +37,6 @@ const {} = require("firefaux");
 - Install latest LTS version of [Node.js](https://nodejs.org/en/)
 - Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable`
 - Install dependencies using `pnpm install`
-- Run interactive tests using `pnpm dev`
 
 ## License
 
