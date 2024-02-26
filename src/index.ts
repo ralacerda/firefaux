@@ -1,9 +1,24 @@
 import { defu } from "defu";
-import type { MaybeHasId, UserAuth, HasUid } from "./types";
+import type { getAuth } from "firebase-admin/auth";
+import type { getFirestore } from "firebase-admin/firestore";
+import type { MaybeHasId, HasUid } from "./types";
+
+let firestore: ReturnType<typeof getFirestore>;
+let auth: ReturnType<typeof getAuth>;
+
+export function connectToFirebase(
+  firestoreInstance: ReturnType<typeof getFirestore>,
+  authInstance: ReturnType<typeof getAuth>,
+) {
+  firestore = firestoreInstance;
+  auth = authInstance;
+}
 
 export function defineDocument<T>(fn: () => MaybeHasId<T>) {
   return fn;
 }
+
+export type UserAuth = Parameters<typeof auth.createUser>[0];
 
 export function extendDocument<T>(
   doc: () => MaybeHasId<T>,
@@ -17,20 +32,24 @@ export function defineUser(fn: () => UserAuth) {
   return fn;
 }
 
-export function createUser(fn: () => UserAuth) {
-  const uid = Math.random().toString(36).slice(7);
+export async function createUser(fn: () => UserAuth) {
   const user = fn();
+  const { uid } = await auth.createUser({
+    email: user.email,
+    password: user.password,
+    displayName: user.displayName,
+  });
   return {
     uid,
     ...user,
   };
 }
 
-export function createMultipleUsers(user: () => UserAuth, count: number) {
+export async function createMultipleUsers(user: () => UserAuth, count: number) {
   const users: HasUid<UserAuth>[] = [];
   for (let i = 0; i < count; i++) {
     const newUser = createUser(user);
-    users.push(newUser);
+    users.push(await newUser);
   }
   return users;
 }
@@ -73,11 +92,12 @@ export function createDoc<T>(
     factoryGeneratedDocument = finalDoc;
   }
 
-  id = id || Math.random().toString(36).slice(7);
   const finalDocument = defu(overwriteDocument, factoryGeneratedDocument);
 
-  console.log(`Created document with id ${id} in ${name}`);
-  console.dir(finalDocument);
+  if (id) {
+    firestore.collection(name).doc(id).set(finalDocument);
+  }
+  firestore.collection(name).add(finalDocument);
 }
 
 export { Maybe, MaybeOr } from "./utils/probalities";
