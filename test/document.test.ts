@@ -23,10 +23,12 @@ describe("createDocument", () => {
     });
 
     const doc = await getDoc(collection, id);
-    expect(doc).toEqual({
-      name: "Renato Lacerda",
-      admin: true,
-    });
+    expect(doc).toMatchInlineSnapshot(`
+      {
+        "admin": true,
+        "name": "Renato Lacerda",
+      }
+    `);
   });
 
   it("creates an document with a custom id", async () => {
@@ -41,9 +43,11 @@ describe("createDocument", () => {
     });
 
     const doc = await getDoc(collection, "custom-id");
-    expect(doc).toEqual({
-      name: "Renato Lacerda",
-      admin: true,
-    });
+    expect(doc).toMatchInlineSnapshot(`
+      {
+        "admin": true,
+        "name": "Renato Lacerda",
+      }
+    `);
   });
 });
