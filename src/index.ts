@@ -71,9 +71,12 @@ export function createMultipleDocs<T>(
     | ReturnType<typeof extendDocument<T>>,
   count: number,
 ) {
+  const docsIds = [];
   for (let i = 0; i < count; i++) {
-    createDoc(name, documentFactory);
+    const id = createDoc(name, documentFactory);
+    docsIds.push(id);
   }
+  return docsIds;
 }
 
 export function createDoc<T>(
@@ -111,9 +114,11 @@ export function createDoc<T>(
 
   if (id) {
     firestore.collection(name).doc(id).set(finalDocument);
-    return;
+    return id;
   }
-  firestore.collection(name).add(finalDocument);
+  const document = firestore.collection(name).doc();
+  document.set(finalDocument);
+  return document.id;
 }
 
 export { Maybe, MaybeOr } from "./utils/probalities";

@@ -62,4 +62,17 @@ type Product = {
     _id: adminUser.uid,
     name: adminUser.displayName,
   });
+
+  const products = ff.createMultipleDocs(
+    "products",
+    () => ({
+      name: faker.commerce.productName(),
+      price: faker.commerce.price(),
+      stock: faker.number.int(100),
+      provider: faker.company.name(),
+    }),
+    10,
+  );
+
+  console.log(products);
 })();
