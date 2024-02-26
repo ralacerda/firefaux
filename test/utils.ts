@@ -27,11 +27,27 @@ export async function getDoc(collection: string, id: string) {
   return doc.data();
 }
 
+export async function getUser(uid: string) {
+  const user = await auth.getUser(uid);
+  return user;
+}
+
 export async function clearCollections() {
   for (const col of collectionsToClean) {
     const query = await col.listDocuments();
     for (const doc of query) {
       await doc.delete();
     }
+  }
+}
+
+const usersToClean = new Set<string>();
+export function addUsersToClean(uid: string) {
+  usersToClean.add(uid);
+}
+
+export async function clearUsers() {
+  for (const uid of usersToClean) {
+    await auth.deleteUser(uid);
   }
 }
