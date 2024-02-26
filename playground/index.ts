@@ -22,7 +22,7 @@ type Product = {
   const firestore = getFirestore();
   const auth = getAuth();
 
-  ff.connectToFirebase(firestore, auth);
+  ff.connectToFirebase({ firestore, auth });
 
   await ff.clearFirestore(firestore);
   await ff.clearAuth(auth);
