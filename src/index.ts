@@ -7,24 +7,25 @@ import type {
 } from "./types";
 import { setEmulators } from "./firebase";
 
-let firestore: FirestoreInstance;
-let auth: AuthInstance;
+let _firestore: FirestoreInstance | undefined;
+let _auth: AuthInstance | undefined;
 
 setEmulators();
 
-export function connectToFirebase(
-  firestoreInstance: FirestoreInstance,
-  authInstance: AuthInstance,
-) {
-  firestore = firestoreInstance;
-  auth = authInstance;
+export function connectToFirebase(instances: {
+  firestore?: FirestoreInstance;
+  auth?: AuthInstance;
+}) {
+  const { firestore, auth } = instances;
+  _firestore = firestore ?? undefined;
+  _auth = auth ?? undefined;
 }
 
 export function defineDocument<T>(fn: () => MaybeHasId<T>) {
   return fn;
 }
 
-export type UserAuth = Parameters<typeof auth.createUser>[0];
+export type UserAuth = Parameters<AuthInstance["createUser"]>[0];
 
 export function extendDocument<T>(
   doc: () => MaybeHasId<T>,
@@ -42,8 +43,11 @@ export async function createUser(
   fn: () => UserAuth,
   overwriteDocument?: UserAuth,
 ) {
+  if (!_auth) {
+    throw new Error("You need to connect to firebase first");
+  }
   const user = defu(overwriteDocument, fn());
-  const { uid } = await auth.createUser({
+  const { uid } = await _auth.createUser({
     email: user.email,
     password: user.password,
     displayName: user.displayName,
@@ -86,6 +90,10 @@ export function createDoc<T>(
     | ReturnType<typeof extendDocument<T>>,
   overwriteDocument?: Partial<MaybeHasId<T>>,
 ) {
+  if (!_firestore) {
+    throw new Error("You need to connect to firebase first");
+  }
+
   let factoryGeneratedDocument;
   let id;
 
@@ -113,10 +121,10 @@ export function createDoc<T>(
   id = _id || id;
 
   if (id) {
-    firestore.collection(name).doc(id).set(finalDocument);
+    _firestore.collection(name).doc(id).set(finalDocument);
     return id;
   }
-  const document = firestore.collection(name).doc();
+  const document = _firestore.collection(name).doc();
   document.set(finalDocument);
   return document.id;
 }
