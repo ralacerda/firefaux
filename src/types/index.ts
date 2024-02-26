@@ -1,3 +1,9 @@
+import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
+
+export type FirestoreInstance = ReturnType<typeof getFirestore>;
+export type AuthInstance = ReturnType<typeof getAuth>;
+
 export type DocumentContext = {
   uid: string;
 };

@@ -1,14 +1,20 @@
 import { defu } from "defu";
-import type { getAuth } from "firebase-admin/auth";
-import type { getFirestore } from "firebase-admin/firestore";
-import type { MaybeHasId, HasUid } from "./types";
+import type {
+  MaybeHasId,
+  HasUid,
+  FirestoreInstance,
+  AuthInstance,
+} from "./types";
+import { setEmulators } from "./firebase";
 
-let firestore: ReturnType<typeof getFirestore>;
-let auth: ReturnType<typeof getAuth>;
+let firestore: FirestoreInstance;
+let auth: AuthInstance;
+
+setEmulators();
 
 export function connectToFirebase(
-  firestoreInstance: ReturnType<typeof getFirestore>,
-  authInstance: ReturnType<typeof getAuth>,
+  firestoreInstance: FirestoreInstance,
+  authInstance: AuthInstance,
 ) {
   firestore = firestoreInstance;
   auth = authInstance;
@@ -32,13 +38,17 @@ export function defineUser(fn: () => UserAuth) {
   return fn;
 }
 
-export async function createUser(fn: () => UserAuth) {
-  const user = fn();
+export async function createUser(
+  fn: () => UserAuth,
+  overwriteDocument?: UserAuth,
+) {
+  const user = defu(overwriteDocument, fn());
   const { uid } = await auth.createUser({
     email: user.email,
     password: user.password,
     displayName: user.displayName,
   });
+
   return {
     uid,
     ...user,
@@ -92,12 +102,19 @@ export function createDoc<T>(
     factoryGeneratedDocument = finalDoc;
   }
 
-  const finalDocument = defu(overwriteDocument, factoryGeneratedDocument);
+  const { _id = undefined, ...finalDocument } = defu(
+    overwriteDocument,
+    factoryGeneratedDocument,
+  );
+
+  id = _id || id;
 
   if (id) {
     firestore.collection(name).doc(id).set(finalDocument);
+    return;
   }
   firestore.collection(name).add(finalDocument);
 }
 
 export { Maybe, MaybeOr } from "./utils/probalities";
+export { clearFirestore, clearAuth } from "./utils/clear";

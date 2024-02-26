@@ -4,50 +4,62 @@ import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import * as ff from "../src";
 
-initializeApp({ projectId: "demo-firefaux" });
+type UserDocument = {
+  name: string;
+  admin: boolean;
+};
 
-ff.connectToFirebase(getFirestore(), getAuth());
-
-const userDocument = ff.defineDocument(() => {
-  const name = faker.person.fullName();
-
-  return {
-    name,
-    admin: false,
-  };
-});
-
-const admin = ff.extendDocument(userDocument, () => {
-  return {
-    admin: true,
-  };
-});
-
-ff.createDoc("users", userDocument);
-
-ff.createDoc("users", admin);
-
-ff.createDoc("users", admin, {
-  name: "Renato",
-});
-
-const user = ff.defineUser(() => {
-  return {
-    displayName: faker.person.fullName(),
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-  };
-});
+type Product = {
+  name: string;
+  price: number;
+  stock: number;
+  provider: string;
+};
 
 // eslint-disable-next-line unicorn/prefer-top-level-await
-(async function () {
+(async () => {
+  initializeApp({ projectId: "demo-firefaux" });
+  const firestore = getFirestore();
+  const auth = getAuth();
+
+  ff.connectToFirebase(firestore, auth);
+
+  await ff.clearFirestore(firestore);
+  await ff.clearAuth(auth);
+
+  const userDocument = ff.defineDocument<UserDocument>(() => {
+    const name = faker.person.fullName();
+
+    return {
+      name,
+      admin: false,
+    };
+  });
+
+  const user = ff.defineUser(() => {
+    return {
+      displayName: faker.person.fullName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    };
+  });
+
   const users = await ff.createMultipleUsers(user, 3);
 
   for (const user of users) {
     ff.createDoc("users", userDocument, {
       _id: user.uid,
+      name: user.displayName,
     });
   }
 
-  console.log(users);
+  const adminUser = await ff.createUser(user, {
+    displayName: "Renato Lacerda",
+    email: "renato@test.com",
+  });
+
+  ff.createDoc("users", userDocument, {
+    _id: adminUser.uid,
+    name: adminUser.displayName,
+  });
 })();
