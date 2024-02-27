@@ -1,4 +1,4 @@
-import { expect, it, describe, afterAll } from "vitest";
+import { it, describe, afterAll } from "vitest";
 import { getFirestore } from "firebase-admin/firestore";
 import * as ff from "../src";
 import { createCollection, getDoc, clearCollections } from "./utils";
@@ -12,7 +12,7 @@ describe("createDocument", () => {
     await clearCollections();
   });
 
-  it("creates an document", async () => {
+  it.concurrent("creates an document", async ({ expect }) => {
     const collection = createCollection();
 
     const id = ff.createDoc(collection, () => {
@@ -31,7 +31,7 @@ describe("createDocument", () => {
     `);
   });
 
-  it("creates an document with a custom id", async () => {
+  it.concurrent("creates an document with a custom id", async ({ expect }) => {
     const collection = createCollection();
 
     ff.createDoc(collection, () => {
@@ -51,57 +51,63 @@ describe("createDocument", () => {
     `);
   });
 
-  it("creates an document defined with defineDocument", async () => {
-    const collection = createCollection();
+  it.concurrent(
+    "creates an document defined with defineDocument",
+    async ({ expect }) => {
+      const collection = createCollection();
 
-    const userDocument = ff.defineDocument(() => {
-      return {
-        name: "Renato Lacerda",
-        credits: 100,
-      };
-    });
+      const userDocument = ff.defineDocument(() => {
+        return {
+          name: "Renato Lacerda",
+          credits: 100,
+        };
+      });
 
-    const id = ff.createDoc(collection, userDocument);
+      const id = ff.createDoc(collection, userDocument);
 
-    const doc = await getDoc(collection, id);
-    expect(doc).toMatchInlineSnapshot(`
+      const doc = await getDoc(collection, id);
+      expect(doc).toMatchInlineSnapshot(`
       {
         "credits": 100,
         "name": "Renato Lacerda",
       }
     `);
-  });
+    },
+  );
 
-  it("creates an document defined with extendDocument", async () => {
-    const collection = createCollection();
+  it.concurrent(
+    "creates an document defined with extendDocument",
+    async ({ expect }) => {
+      const collection = createCollection();
 
-    const userDocument = ff.defineDocument(() => {
-      return {
-        name: "Renato Lacerda",
-        credits: 100,
-        admin: false,
-      };
-    });
+      const userDocument = ff.defineDocument(() => {
+        return {
+          name: "Renato Lacerda",
+          credits: 100,
+          admin: false,
+        };
+      });
 
-    const adminDocument = ff.extendDocument(userDocument, () => {
-      return {
-        admin: true,
-      };
-    });
+      const adminDocument = ff.extendDocument(userDocument, () => {
+        return {
+          admin: true,
+        };
+      });
 
-    const id = ff.createDoc(collection, adminDocument);
+      const id = ff.createDoc(collection, adminDocument);
 
-    const doc = await getDoc(collection, id);
-    expect(doc).toMatchInlineSnapshot(`
+      const doc = await getDoc(collection, id);
+      expect(doc).toMatchInlineSnapshot(`
       {
         "admin": true,
         "credits": 100,
         "name": "Renato Lacerda",
       }
     `);
-  });
+    },
+  );
 
-  it("creates an document with an overwrite", async () => {
+  it.concurrent("creates an document with an overwrite", async ({ expect }) => {
     const collection = createCollection();
 
     const userDocument = ff.defineDocument(() => {
@@ -124,7 +130,7 @@ describe("createDocument", () => {
     `);
   });
 
-  it("creates multiple documents", async () => {
+  it.concurrent("creates multiple documents", async ({ expect }) => {
     const collection = createCollection();
 
     const userDocument = ff.defineDocument(() => {
