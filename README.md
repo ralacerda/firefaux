@@ -3,9 +3,6 @@
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 
-<!-- [![bundle][bundle-src]][bundle-href] -->
-<!-- [![Codecov][codecov-src]][codecov-href] -->
-
 A simple and fast way to populate your Firebase Emulator with fake data.
 Useful for developing and testing.
 
@@ -25,11 +22,75 @@ pnpm install firefaux
 ```
 
 If you want to create random date, another package is required.
-I recommend [fakerjs](https://fakerjs.dev/)
+I recommend [fakerjs](https://fakerjs.dev/).
 
-```js
+### Creating documents
+
+You can define an document with `defineDocument`.
+
+```ts
 import * as ff from "firefaux";
+
+type Product = {
+  name: string;
+  price: string;
+  stock: number;
+  provider: string;
+};
+
+const product = ff.defineDocument<Product>(() => {
+  return {
+    name: faker.commerce.productName(),
+    price: faker.commerce.price({ min: 100, max: 800 }),
+    stock: faker.number.int(100),
+    provider: faker.company.name(),
+  };
+});
 ```
+
+You can extend another document.
+
+```ts
+import * as ff from "firefaux";
+
+const expansiveProduct = ff.extendDocument<Product>(product, () => {
+  return {
+    price: faker.commerce.price({ min: 1000, max: 8000 }),
+    stock: faker.number.int(10),
+  };
+});
+```
+
+You can then create a document with `createDoc`.
+
+```ts
+ff.createDoc("products", product);
+```
+
+You can overwrite parts of the document definition.
+
+```ts
+ff.createDoc("products", product, {
+  price: '10.00',
+  name: "Cheap product",
+});
+```
+
+If you need, you can set the document `id` by using the `_id` property.
+
+```ts
+ff.createDoc("products", product, {
+  _id: "123"
+});
+```
+
+You can also create multiple documents at once with `createMultipleDocs`
+
+```ts
+ff.createMultipleDocs("products", product, 20);
+ff.createMultipleDocs("products", expansiveProduct, 5);
+```
+
 
 ## Development
 
@@ -42,15 +103,7 @@ import * as ff from "firefaux";
 
 Published under [MIT License](./LICENSE).
 
-<!-- Badges -->
-
 [npm-version-src]: https://img.shields.io/npm/v/packageName?style=flat&colorA=18181B&colorB=F0DB4F
 [npm-version-href]: https://npmjs.com/package/packageName
 [npm-downloads-src]: https://img.shields.io/npm/dm/packageName?style=flat&colorA=18181B&colorB=F0DB4F
 [npm-downloads-href]: https://npmjs.com/package/packageName
-
-<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/packageName/main?style=flat&colorA=18181B&colorB=F0DB4F
-[codecov-href]: https://codecov.io/gh/unjs/packageName
-
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/packageName?style=flat&colorA=18181B&colorB=F0DB4F
-[bundle-href]: https://bundlephobia.com/result?p=packageName -->

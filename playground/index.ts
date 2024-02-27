@@ -11,7 +11,7 @@ type UserDocument = {
 
 type Product = {
   name: string;
-  price: number;
+  price: string;
   stock: number;
   provider: string;
 };
@@ -63,16 +63,22 @@ type Product = {
     name: adminUser.displayName,
   });
 
-  const products = ff.createMultipleDocs(
-    "products",
-    () => ({
+  const product = ff.defineDocument<Product>(() => {
+    return {
       name: faker.commerce.productName(),
-      price: faker.commerce.price(),
+      price: faker.commerce.price({ min: 100, max: 800 }),
       stock: faker.number.int(100),
       provider: faker.company.name(),
-    }),
-    10,
-  );
+    };
+  });
 
-  console.log(products);
+  const expansiveProduct = ff.extendDocument<Product>(product, () => {
+    return {
+      price: faker.commerce.price({ min: 1000, max: 8000 }),
+      stock: faker.number.int(10),
+    };
+  });
+
+  ff.createMultipleDocs("products", product, 20);
+  ff.createMultipleDocs("products", expansiveProduct, 5);
 })();
