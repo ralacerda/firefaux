@@ -1,4 +1,4 @@
-import { expect, it, describe, beforeEach } from "vitest";
+import { expect, it, describe, afterEach } from "vitest";
 import { getAuth } from "firebase-admin/auth";
 import { faker } from "@faker-js/faker";
 import * as ff from "../src";
@@ -8,7 +8,7 @@ const auth = getAuth();
 ff.connectToFirebase({ auth });
 
 describe("createUser", () => {
-  beforeEach(async () => {
+  afterEach(async () => {
     await clearUsers();
   });
 
