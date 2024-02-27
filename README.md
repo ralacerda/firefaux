@@ -103,7 +103,7 @@ ff.createMultipleDocs("products", expansiveProduct, 5);
 
 Published under [MIT License](./LICENSE).
 
-[npm-version-src]: https://img.shields.io/npm/v/packageName?style=flat&colorA=18181B&colorB=F0DB4F
-[npm-version-href]: https://npmjs.com/package/packageName
-[npm-downloads-src]: https://img.shields.io/npm/dm/packageName?style=flat&colorA=18181B&colorB=F0DB4F
-[npm-downloads-href]: https://npmjs.com/package/packageName
+[npm-version-src]: https://img.shields.io/npm/v/firefaux?style=flat&colorA=241F31&colorB=FAA114
+[npm-version-href]: https://npmjs.com/package/firefaux
+[npm-downloads-src]: https://img.shields.io/npm/dm/firefaux?style=flat&colorA=241F31&colorB=FAA114
+[npm-downloads-href]: https://npmjs.com/package/firefaux

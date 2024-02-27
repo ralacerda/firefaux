@@ -1,8 +1,8 @@
 {
   "name": "firefaux",
-  "version": "0.0.1",
-  "description": "",
-  "repository": "unjs/packageName",
+  "version": "0.0.2",
+  "description": "A simple and fast way to populate your Firebase Emulator with fake data.",
+  "repository": "ralacerda/firefaux",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
