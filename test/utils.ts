@@ -32,6 +32,11 @@ export async function getUser(uid: string) {
   return user;
 }
 
+export async function getAllUsers() {
+  const users = await auth.listUsers();
+  return users.users;
+}
+
 export async function clearCollections() {
   for (const col of collectionsToClean) {
     const query = await col.listDocuments();
@@ -41,13 +46,9 @@ export async function clearCollections() {
   }
 }
 
-const usersToClean = new Set<string>();
-export function addUsersToClean(uid: string) {
-  usersToClean.add(uid);
-}
-
 export async function clearUsers() {
-  for (const uid of usersToClean) {
-    await auth.deleteUser(uid);
+  const users = await auth.listUsers();
+  for (const user of users.users) {
+    await auth.deleteUser(user.uid);
   }
 }
